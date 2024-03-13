@@ -40,20 +40,52 @@ public class MainActivity extends AppCompatActivity {
         //TODO 4.6 Retrieve the value using the key, and set a default when there is none
 
         //TODO 3.13 Get the intent and retrieve the exchange rate passed to it
+        Intent intent = getIntent();
+        // The default value from TODO2.2 is now set here
+        exchangeRate = intent.getDoubleExtra(SubActivity.INTENT_EXCH_RATE, ExchangeRate.calculateExchangeRate());
 
         //TODO 2.1 Use findViewById to get references to the widgets in the layout
+        buttonConvert = findViewById(R.id.buttonConvert);
+        buttonSetExchangeRate = findViewById(R.id.buttonSetExchangeRate);
+        editTextValue = findViewById(R.id.editTextValue);
+        textViewResult = findViewById(R.id.textViewResult);
+        textViewExchangeRate = findViewById(R.id.textViewExchangeRate);
+
 
         //TODO 2.2 Assign a default exchange rate of 2.95 to the textView
+//        exchangeRate = ExchangeRate.calculateExchangeRate(); // Default Value
+        textViewExchangeRate.setText( String.valueOf(exchangeRate));
 
         //TODO 2.3 Set up setOnClickListener for the Convert Button
         //TODO 2.4 Display a Toast & Logcat message if the editTextValue widget contains an empty string
         //TODO 2.5 If not, calculate the units of B with the exchange rate and display it
+        buttonConvert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String userInput = editTextValue.getText().toString();
+                if (userInput.equals("")) {
+                    Log.i("MainActivity", "Empty String");
+                    Toast.makeText(MainActivity.this, "Invalid input: Empty String",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    double unitB = exchangeRate * Double.parseDouble(userInput);
+                    textViewResult.setText( String.valueOf(unitB) );
+                }
+            }
+        });
 
 
         //TODO 3.1 Modify the Android Manifest to specify that the parent of SubActivity is MainActivity
         //TODO 3.2 Get a reference to the Set Exchange Rate Button
         //TODO 3.3 Set up setOnClickListener for this
         //TODO 3.4 Write an Explicit Intent to get to SubActivity
+        buttonSetExchangeRate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SubActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
