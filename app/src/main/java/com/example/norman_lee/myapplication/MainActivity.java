@@ -38,11 +38,16 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO 4.5 Get a reference to the sharedPreferences object
         //TODO 4.6 Retrieve the value using the key, and set a default when there is none
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        String defaultExchangeRateStr = String.valueOf(ExchangeRate.calculateExchangeRate());
+        String exchangeRateStr = mPreferences.getString(RATE_KEY, defaultExchangeRateStr);
 
         //TODO 3.13 Get the intent and retrieve the exchange rate passed to it
         Intent intent = getIntent();
         // The default value from TODO2.2 is now set here
-        exchangeRate = intent.getDoubleExtra(SubActivity.INTENT_EXCH_RATE, ExchangeRate.calculateExchangeRate());
+        // exchangeRateStr can be either the saved sharedpref value or default value
+        exchangeRate = intent.getDoubleExtra(SubActivity.INTENT_EXCH_RATE, Double.parseDouble(exchangeRateStr));
+
 
         //TODO 2.1 Use findViewById to get references to the widgets in the layout
         buttonConvert = findViewById(R.id.buttonConvert);
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //TODO 2.2 Assign a default exchange rate of 2.95 to the textView
-//        exchangeRate = ExchangeRate.calculateExchangeRate(); // Default Value
+        //Default Value already set and stored in exchangeRate
         textViewExchangeRate.setText( String.valueOf(exchangeRate));
 
         //TODO 2.3 Set up setOnClickListener for the Convert Button
@@ -63,13 +68,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String userInput = editTextValue.getText().toString();
+
                 if (userInput.equals("")) {
-                    Log.i("MainActivity", "Empty String");
-                    Toast.makeText(MainActivity.this, "Invalid input: Empty String",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Invalid Input: Empty String",
+                            Toast.LENGTH_SHORT).show();
+                    Log.i("MainActivity", "User input empty string");
                 } else {
-                    double unitB = exchangeRate * Double.parseDouble(userInput);
-                    textViewResult.setText( String.valueOf(unitB) );
+                    double totalAmount = exchangeRate * Double.parseDouble(userInput);
+                    textViewResult.setText( String.valueOf(totalAmount) );
                 }
             }
         });
@@ -108,13 +114,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //TODO 4.1 Go to res/menu/menu_main.xml and add a menu item Set Exchange Rate
-    //TODO 4.2 In onOptionsItemSelected, add a new if-statement and code accordingly
-
-    //TODO 5.1 Go to res/menu/menu_main.xml and add a menu item Open Map App
-    //TODO 5.2 In onOptionsItemSelected, add a new if-statement
-    //TODO 5.3 code the Uri object and set up the intent
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -126,14 +125,55 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        //TODO 4.1 Go to res/menu/menu_main.xml and add a menu item Set Exchange Rate
+        //TODO 4.2 In onOptionsItemSelected, add a new if-statement and code accordingly
+        else if (id == R.id.set_exchange_rate_menu_item) {
+            Intent intent = new Intent(MainActivity.this, SubActivity.class);
+            startActivity(intent);
+        }
+        //TODO 5.1 Go to res/menu/menu_main.xml and add a menu item Open Map App
+        //TODO 5.2 In onOptionsItemSelected, add a new if-statement
+        //TODO 5.3 code the Uri object and set up the intent
+        else if (id == R.id.map_menu_item) {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("geo").opaquePart("0.0").appendQueryParameter("q", "");
+            Uri geolocation = builder.build(); // Build the Uri object
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(geolocation);  // Pass the Uri object here
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
     //TODO 4.3 override the methods in the Android Activity Lifecycle here
     //TODO 4.4 for each of them, write a suitable string to display in the Logcat
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("MainActivty", "onStart is invoked");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("MainActivty", "onResume is invoked");
+    }
 
     //TODO 4.7 In onPause, get a reference to the SharedPreferences.Editor object
     //TODO 4.8 store the exchange rate using the putString method with a key
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor prefEditor = mPreferences.edit();
+        prefEditor.putString(RATE_KEY, String.valueOf(MainActivity.this.exchangeRate));
+        prefEditor.apply();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("MainActivty", "onDestroy is invoked");
+    }
 }

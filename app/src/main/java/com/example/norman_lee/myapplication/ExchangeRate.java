@@ -1,6 +1,7 @@
 package com.example.norman_lee.myapplication;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ExchangeRate {
 
@@ -13,12 +14,12 @@ public class ExchangeRate {
             throws NumberFormatException, ArithmeticException {
         if (A.equals("") || B.equals("") ) throw new NumberFormatException();
 
-        double valA = Double.parseDouble(A);
-        double valB = Double.parseDouble(B);
+        BigDecimal valA = new BigDecimal(A);
+        BigDecimal valB = new BigDecimal(B);
 
-        if ( Math.abs(valA) < 1e-9 ) throw new ArithmeticException();
+        if ( valA.equals( new BigDecimal("0.0") ) ) throw new ArithmeticException();
 
-        return valB / valA;
+        return valB.divide(valA, 2, RoundingMode.HALF_UP).doubleValue();
     }
 
 
