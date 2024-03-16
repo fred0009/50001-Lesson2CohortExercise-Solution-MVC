@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.norman_lee.myapplication.model.ExchangeRate;
+import com.example.norman_lee.myapplication.model.ExchangeRateService;
 
 public class SubActivity extends AppCompatActivity {
 
@@ -54,7 +56,9 @@ public class SubActivity extends AppCompatActivity {
                 String stringB = editTextSubValueOfB.getText().toString();
 
                 try {
-                    double exchangeRate = ExchangeRate.calculateExchangeRate(stringA, stringB);
+                    ExchangeRateService exchangeRateObject = new ExchangeRate();
+                    exchangeRateObject.setExchangeRate(stringA, stringB);
+                    double exchangeRate = exchangeRateObject.getExchangeRate();
                     Intent intent = new Intent(SubActivity.this, MainActivity.class);
                     intent.putExtra(INTENT_EXCH_RATE, exchangeRate);
                     startActivity(intent);
@@ -67,8 +71,6 @@ public class SubActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     //TODO 4.10 Don't forget to override onPause() for saving text in edit text widgets

@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.norman_lee.myapplication.model.ExchangeRate;
+import com.example.norman_lee.myapplication.model.ExchangeRateService;
+
 public class MainActivity extends AppCompatActivity {
 
     Button buttonConvert;
@@ -39,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
         //TODO 4.5 Get a reference to the sharedPreferences object
         //TODO 4.6 Retrieve the value using the key, and set a default when there is none
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-        String defaultExchangeRateStr = String.valueOf(ExchangeRate.calculateExchangeRate());
+
+        ExchangeRateService exchangeRateObject = new ExchangeRate();
+        String defaultExchangeRateStr = String.valueOf(exchangeRateObject.getExchangeRate());
         String exchangeRateStr = mPreferences.getString(RATE_KEY, defaultExchangeRateStr);
 
         //TODO 3.13 Get the intent and retrieve the exchange rate passed to it
@@ -59,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO 2.2 Assign a default exchange rate of 2.95 to the textView
         //Default Value already set and stored in exchangeRate
-        textViewExchangeRate.setText( String.valueOf(exchangeRate));
+        updateTextViewText(textViewExchangeRate, String.valueOf(exchangeRate));
 
         //TODO 2.3 Set up setOnClickListener for the Convert Button
         //TODO 2.4 Display a Toast & Logcat message if the editTextValue widget contains an empty string
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("MainActivity", "User input empty string");
                 } else {
                     double totalAmount = exchangeRate * Double.parseDouble(userInput);
-                    textViewResult.setText( String.valueOf(totalAmount) );
+                    updateTextViewText(textViewResult, String.valueOf(totalAmount));
                 }
             }
         });
@@ -175,5 +180,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.i("MainActivty", "onDestroy is invoked");
+    }
+
+
+    // This is the view component of MVC
+    public void updateTextViewText(TextView v, String s) {
+        v.setText(s);
     }
 }
