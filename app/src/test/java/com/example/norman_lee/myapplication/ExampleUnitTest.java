@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.example.norman_lee.myapplication.model.ExchangeRate;
+import com.example.norman_lee.myapplication.model.ExchangeRateService;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -21,22 +22,27 @@ public class ExampleUnitTest {
     //TODO 5.4 Write unit tests to check calculateExchangeRate
     @Test
     public void default_exchange_rate() {
-        assertEquals(2.95, ExchangeRate.calculateExchangeRate(), 0e-7);
+        ExchangeRateService exchangeRate = new ExchangeRate();
+        assertEquals(2.95, exchangeRate.getExchangeRate(), 0e-7);
     }
 
     @Test
     public void user_input_exchange_rate() {
-        assertEquals(0.33, ExchangeRate.calculateExchangeRate("3", "1"), 0e-7);
+        ExchangeRateService exchangeRate = new ExchangeRate();
+        exchangeRate.setExchangeRate("3", "1");
+        assertEquals(0.33, exchangeRate.getExchangeRate(), 0e-7);
     }
 
     @Test(expected = NumberFormatException.class)
     public void number_non_number_input() {
-        ExchangeRate.calculateExchangeRate("a", "b");
+        ExchangeRateService exchangeRate = new ExchangeRate();
+        exchangeRate.setExchangeRate("a", "b");
     }
 
     @Test(expected = ArithmeticException.class)
     public void division_by_zero() {
-        ExchangeRate.calculateExchangeRate("0", "2");
+        ExchangeRateService exchangeRate = new ExchangeRate();
+        exchangeRate.setExchangeRate("0", "2");
     }
 
 }
